@@ -2,23 +2,26 @@ var express = require("express");
 var cors = require("cors");
 var app = express();
 
-// CORS must come before the other app.use so the front-end is allowed to fetch data.
+// Allow the front-end to request data from this server.
 app.use(cors());
 
-// Lessons data (no image files). Field names match what index.html expects.
 var lessons = [
   { id: 1001, subject: "Maths", location: "London", price: 20, availability: 5, icon: "fa fa-calculator" },
   { id: 1002, subject: "Music", location: "Leeds", price: 25, availability: 5, icon: "fa fa-music" },
   { id: 1003, subject: "Art", location: "Oxford", price: 18, availability: 5, icon: "fa fa-paint-brush" }
 ];
 
-// Respond to every request with the lessons as JSON.
-app.use(function (request, response) {
-  console.log("In comes a request to: " + request.url);
+// GET /lessons returns the lessons as JSON.
+app.get("/lessons", function (request, response) {
   response.json(lessons);
 });
 
-// Port 3001 matches the URL in fetchData in index.html.
+// This MUST be the last route. It runs only if no route above matched.
+app.use(function (request, response) {
+  response.status(404);
+  response.send("Page Not Found!");
+});
+
 app.listen(3001, function () {
   console.log("App started on port 3001");
 });
